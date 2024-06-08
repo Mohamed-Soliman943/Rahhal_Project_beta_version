@@ -3,8 +3,8 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 class Presenter extends StatefulWidget {
-  const Presenter({Key? key,}) ;
-  // final String selector;
+  const Presenter({Key? key, required this.videoURL,}) ;
+  final String videoURL;
   @override
   State<Presenter> createState() => _PresenterState();
 }
@@ -19,7 +19,7 @@ class _PresenterState extends State<Presenter> {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.asset('assets/videos/info.mp4');
+    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoURL));
     chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
       autoPlay: true,
@@ -45,13 +45,13 @@ class _PresenterState extends State<Presenter> {
     });
 
     // Set up a timeout mechanism
-    Future.delayed(Duration(seconds: 5), () {
-      if (!isVideoInitialized) {
-        setState(() {
-          timeoutOccurred = true;
-        });
-      }
-    });
+    // Future.delayed(Duration(seconds: 5), () {
+    //   if (!isVideoInitialized) {
+    //     setState(() {
+    //       timeoutOccurred = true;
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -63,11 +63,11 @@ class _PresenterState extends State<Presenter> {
 
   @override
   Widget build(BuildContext context) {
-    if (!isVideoInitialized && !timeoutOccurred) {
+    if (!isVideoInitialized) {
       return Center(
         child: CircularProgressIndicator(),
       );
-    } else if (timeoutOccurred || hasError) {
+    } else if (hasError) {
       return Center(
         child: Container(
           width: double.infinity,
@@ -75,7 +75,7 @@ class _PresenterState extends State<Presenter> {
           color: Colors.red,
           child: Center(
             child: Text(
-              timeoutOccurred ? 'Loading took too long!' : 'Error loading Rahhal!',
+               'Error loading Rahhal!',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,

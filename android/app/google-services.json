@@ -8,12 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:979692880562:android:5b242ee08f06393602bfab",
+        "mobilesdk_app_id": "1:979692880562:android:c15eed1431c9caa802bfab",
         "android_client_info": {
-          "package_name": "com.example.rahal"
+          "package_name": "com.example.rahaal"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "979692880562-ei722v0c1dk2kuvc1pccpsfrcivglrl7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAV6dfOpj2r-pvyWcFcgM9bG6k7f2g9e58"
@@ -21,7 +26,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979692880562-ei722v0c1dk2kuvc1pccpsfrcivglrl7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "979692880562-8lb8tl10e647k40rq2ndpspp91ed73sj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rahaal"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979692880562:android:5b242ee08f06393602bfab",
+        "android_client_info": {
+          "package_name": "com.example.rahal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "979692880562-hjn8fmgcmmdi606dssfsnsqhmu1pmnm4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rahal",
+            "certificate_hash": "1e07493ee0560168b33819f627f7a4d49559cd64"
+          }
+        },
+        {
+          "client_id": "979692880562-ei722v0c1dk2kuvc1pccpsfrcivglrl7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV6dfOpj2r-pvyWcFcgM9bG6k7f2g9e58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979692880562-ei722v0c1dk2kuvc1pccpsfrcivglrl7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "979692880562-8lb8tl10e647k40rq2ndpspp91ed73sj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rahaal"
+              }
+            }
+          ]
         }
       }
     },
@@ -32,7 +93,12 @@
           "package_name": "com.example.rh"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "979692880562-ei722v0c1dk2kuvc1pccpsfrcivglrl7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAV6dfOpj2r-pvyWcFcgM9bG6k7f2g9e58"
@@ -40,7 +106,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979692880562-ei722v0c1dk2kuvc1pccpsfrcivglrl7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "979692880562-8lb8tl10e647k40rq2ndpspp91ed73sj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rahaal"
+              }
+            }
+          ]
         }
       }
     }

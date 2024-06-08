@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rahal/widgets/AfterDetection.dart';
 import 'package:tflite_v2/tflite_v2.dart';
+
+import '../classes/card_class.dart';
 
 class CameraAiDetectionScreen extends StatefulWidget {
   const CameraAiDetectionScreen({Key? key});
@@ -12,10 +15,12 @@ class CameraAiDetectionScreen extends StatefulWidget {
 }
 
 class _CameraAiDetectionScreenState extends State<CameraAiDetectionScreen> {
+  List<Widget> _stackChildren = [];
   CameraController? _controller; // Changed to nullable
   XFile? _savedImage;
   bool _isProcessing = false;
-  String _result = '';
+  String? _result;
+  cardClass? cardData;
 
   @override
   void initState() {
@@ -39,9 +44,12 @@ class _CameraAiDetectionScreenState extends State<CameraAiDetectionScreen> {
       );
       _controller = CameraController(
         backCamera,
-        ResolutionPreset.medium,
+        ResolutionPreset.high,
+        enableAudio: false, // Ensure audio is disabled if not needed
+
       );
       await _controller!.initialize();
+      await _controller!.setFlashMode(FlashMode.off); // Explicitly disable flash
       setState(() {}); // Update the state to reflect the initialized camera
     } catch (e) {
       print('Error initializing camera: $e');
@@ -51,12 +59,12 @@ class _CameraAiDetectionScreenState extends State<CameraAiDetectionScreen> {
   Future<void> loadModel() async {
     try {
       await Tflite.loadModel(
-        model: 'assets/tflite/rahhal_model7.tflite',
+        model: 'assets/tflite/rahhal_model.tflite',
         labels: 'assets/tflite/labels.txt',
       );
-      print('Model loaded successfully');
+      print('====================================Model loaded successfully');
     } catch (e) {
-      print('Error loading model: $e');
+      print('=========================================Error loading model: $e');
     }
   }
 
@@ -74,37 +82,82 @@ class _CameraAiDetectionScreenState extends State<CameraAiDetectionScreen> {
       setState(() {
         _result = result;
         _isProcessing = false;
+        print('==============================RESULT================================== : '+result);
       });
+
+      if (_result != null) {
+        await fetchAndSaveDocumentData(_result!);
+        setState(() {
+          if (cardData != null) {
+            _stackChildren.add(
+              // Text(_result!),
+              AfterDetection(
+                onClose: _handleAfterDetectionClose,
+                element: cardData!,
+              ),
+            );
+          }
+        });
+      }
     }
   }
 
   Future<String> _runInference(String imagePath) async {
-    // Load the image from disk
-    final File imageFile = File(imagePath);
-
-    // Convert the image to a format compatible with the model
-    // You may need to resize, normalize, or preprocess the image here
-
-    // Perform inference using TensorFlow Lite model
     final List<dynamic>? output = await Tflite.runModelOnImage(
       path: imagePath,
       numResults: 1, // Specify the number of results you want to retrieve
     );
 
-    // Extract the result from the output
     final String result = output != null ? output[0]['label'] : 'No result';
 
     return result;
   }
 
   void _handleAfterDetectionClose() {
-    // Navigator.pop(context); // Pop the AfterDetection widget from the stack
+    setState(() {
+      if (_stackChildren.isNotEmpty) {
+        _stackChildren.removeLast();
+      }
+    });
+  }
+
+  Future<cardClass?> getDocumentData(String documentId) async {
+    DocumentSnapshot docSnapshot = await FirebaseFirestore.instance.collection("all_monuments").doc(documentId).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      return cardClass(
+        name: data['Name'],
+        coordinates: data['Loc_st'],
+        image: data['Image'],
+        discrebtion: data['Details'],
+        videoURL: data['Vid_link'],
+        modelURL: data['3D_link'], coordinate: data['Loc_geo'],
+      );
+    } else {
+      return null; // Document does not exist
+    }
+  }
+
+  Future<void> fetchAndSaveDocumentData(String documentId) async {
+    cardData = await getDocumentData(documentId);
+
+    if (cardData != null) {
+      // Use cardData here
+      print("Name: ${cardData!.name}");
+      print("Coordinates: ${cardData!.coordinates}");
+      print("Image: ${cardData!.image}");
+      print("Discrebtion: ${cardData!.discrebtion}");
+      print("Video URL: ${cardData!.videoURL}");
+      print("Model URL: ${cardData!.modelURL}");
+    } else {
+      print("Document does not exist.");
+    }
+    setState(() {}); // Update the state with new card data
   }
 
   @override
   Widget build(BuildContext context) {
     if (_controller == null || !_controller!.value.isInitialized) {
-      // Camera is not initialized yet, show a loading indicator
       return Container(
         color: Colors.black,
         child: Center(
@@ -127,7 +180,7 @@ class _CameraAiDetectionScreenState extends State<CameraAiDetectionScreen> {
                   iconSize: 40,
                   onPressed: _isProcessing ? null : _captureAndProcessImage,
                   icon: _isProcessing
-                      ? CircularProgressIndicator()
+                      ? Icon(Icons.camera_alt_outlined)
                       : Icon(Icons.camera_alt),
                   color: Colors.white,
                 ),
@@ -135,15 +188,7 @@ class _CameraAiDetectionScreenState extends State<CameraAiDetectionScreen> {
             ),
           ),
         ),
-        Center(
-          child: Text(
-            _result,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        AfterDetection(onClose: () {
-          _handleAfterDetectionClose();
-        }),
+        ..._stackChildren,
       ],
     );
   }

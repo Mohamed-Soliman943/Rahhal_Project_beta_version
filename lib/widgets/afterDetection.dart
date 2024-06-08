@@ -1,11 +1,13 @@
-
 import 'package:flutter/material.dart';
+import 'package:rahal/classes/card_class.dart';
+import 'package:rahal/screens/detailsScreen.dart';
 import 'package:rahal/widgets/presenter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AfterDetection extends StatefulWidget {
   final VoidCallback onClose;
-  const AfterDetection({Key? key, required this.onClose}) ;
+  const AfterDetection({Key? key, required this.onClose, required this.element}) ;
+  final cardClass element;
 
   @override
   _AfterDetectionState createState() => _AfterDetectionState();
@@ -14,12 +16,11 @@ class AfterDetection extends StatefulWidget {
 class _AfterDetectionState extends State<AfterDetection> {
   CrossFadeState crossFadeState = CrossFadeState.showFirst;
   late WebView _webView;
-
   @override
   void initState() {
     super.initState();
     _webView = WebView(
-      initialUrl: 'https://app.vectary.com/p/3E4usb0n8jl8gAdo4W0qGZ/',
+      initialUrl: widget.element.modelURL,
       javascriptMode: JavascriptMode.unrestricted,
     );
   }
@@ -29,7 +30,11 @@ class _AfterDetectionState extends State<AfterDetection> {
     return Column(
       children: [
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DetailsScreen(element: widget.element)),
+            );          },
           child: Padding(
             padding: const EdgeInsets.only(right: 15.0, top: 10.0),
             child: Row(
@@ -53,7 +58,7 @@ class _AfterDetectionState extends State<AfterDetection> {
           child: AnimatedCrossFade(
             firstChild: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Presenter(),
+              child: Presenter(videoURL: widget.element.videoURL,),
             ),
             secondChild: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -70,7 +75,6 @@ class _AfterDetectionState extends State<AfterDetection> {
                   ],
                 ),
                 child: ClipRRect(
-
                   borderRadius: BorderRadius.circular(25),
                   child: Visibility(
                     visible: crossFadeState == CrossFadeState.showSecond,
@@ -114,9 +118,7 @@ class _AfterDetectionState extends State<AfterDetection> {
               ),
               SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {
-                  widget.onClose();
-                },
+                onPressed: widget.onClose, // Call the onClose callback here
                 child: Icon(
                   Icons.close,
                   size: 30,
