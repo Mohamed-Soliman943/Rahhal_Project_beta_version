@@ -27,7 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final phoneNumberController = TextEditingController();
   final dateOfBirthController = TextEditingController();
   final countryController = TextEditingController();
-  final genderController = TextEditingController();
+  String selectedGender = 'Male';
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           phoneNumberController.text = userDoc['phoneNumber'] ?? '';
           dateOfBirthController.text = userDoc['dateOfBirth'] ?? '';
           countryController.text = userDoc['country'] ?? '';
-          genderController.text = userDoc['gender'] ?? '';
+          selectedGender = userDoc['gender'] ?? 'Male';
           _photoUrl = userDoc['photoUrl'] ?? defaultImageUrl;
         });
       }
@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'phoneNumber': phoneNumberController.text,
         'dateOfBirth': dateOfBirthController.text,
         'country': countryController.text,
-        'gender': genderController.text,
+        'gender': selectedGender,
         'photoUrl': _photoUrl,
       });
     }
@@ -185,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _selectDate(context);
                 }),
                 const SizedBox(height: 10),
-                buildProfileField('Gender', 'Gender', genderController),
+                buildGenderField('Gender', selectedGender),
                 const SizedBox(height: 10),
                 buildProfileField('Country', 'Country', countryController),
                 const SizedBox(height: 10),
@@ -229,6 +229,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             style: TextStyle(color: Colors.white),
             onTap: onTap,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildGenderField(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.orangeAccent,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          DropdownButtonFormField<String>(
+            value: value,
+            items: ['Male', 'Female'].map((String gender) {
+              return DropdownMenuItem<String>(
+                value: gender,
+                child: Text(gender),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedGender = newValue!;
+              });
+            },
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey[800],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+              prefixIcon: Icon(Icons.edit, color: Colors.orangeAccent),
+            ),
+            dropdownColor: Colors.grey[800],
+            style: TextStyle(color: Colors.white),
           ),
         ],
       ),
